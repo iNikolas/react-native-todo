@@ -3,11 +3,9 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {TODOS, TodosStateType, TodoType} from './types';
 
 const todosInitialState: TodosStateType = {
-  todos: {
-    data: null,
-    isLoading: false,
-    errors: '',
-  },
+  data: null,
+  isLoading: false,
+  errors: '',
 };
 
 export const todosSlice = createSlice({
@@ -15,22 +13,22 @@ export const todosSlice = createSlice({
   initialState: todosInitialState,
   reducers: {
     getTodosAction: (state: TodosStateType) => {
-      state.todos.isLoading = true;
-      state.todos.errors = '';
+      state.isLoading = true;
+      state.errors = '';
     },
     getTodosSuccessAction: (
       state: TodosStateType,
       {payload: todos}: PayloadAction<TodoType[]>,
     ) => {
-      state.todos.isLoading = false;
-      state.todos.data = todos;
+      state.isLoading = false;
+      state.data = todos;
     },
     getTodosErrorAction: (
       state: TodosStateType,
       {payload: error}: PayloadAction<string>,
     ) => {
-      state.todos.isLoading = false;
-      state.todos.errors = error;
+      state.isLoading = false;
+      state.errors = error;
     },
   },
 });

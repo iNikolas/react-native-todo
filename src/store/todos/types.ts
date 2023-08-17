@@ -5,18 +5,14 @@ export type TodoType = {
   description: string;
 };
 
-export type ITodosState = {
+export type TodosStateType = {
   data: TodoType[] | null;
   isLoading: boolean;
   errors: string;
 };
 
-export type TodosStateType = {
-  todos: ITodosState;
-};
-
 export const TODOS = 'todos';
 export type TODOS = typeof TODOS;
 
-export const GET_TODOS = `${TODOS}/getTodos`;
+export const GET_TODOS = `${TODOS}/getTodosAction`;
 export type GET_TODOS = typeof GET_TODOS;
