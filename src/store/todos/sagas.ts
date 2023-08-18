@@ -1,10 +1,15 @@
+import {PayloadAction} from '@reduxjs/toolkit';
 import {put, takeLatest} from 'redux-saga/effects';
 
-import {GET_TODOS, TodoType} from './types';
-import {getTodosErrorAction, getTodosSuccessAction} from './slice';
-import {getTodos} from '../../api';
+import {CREATE_NEW_TODO, GET_TODOS, TodoType} from './types';
+import {
+  createNewTodoErrorAction,
+  createNewTodoSuccessAction,
+  getTodosErrorAction,
+  getTodosSuccessAction,
+} from './slice';
+import {createNewTodo, getTodos} from '../../api';
 
-// Generator function
 function* getTodosSaga() {
   try {
     const todos: TodoType[] = yield getTodos();
@@ -14,7 +19,19 @@ function* getTodosSaga() {
   }
 }
 
-// Generator function
+function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
+  try {
+    const newTodo: TodoType = yield createNewTodo(description);
+    yield put(createNewTodoSuccessAction(newTodo));
+  } catch (error) {
+    yield put(createNewTodoErrorAction('Failed to create new ToDo'));
+  }
+}
+
 export function* watchGetTodos() {
   yield takeLatest(GET_TODOS, getTodosSaga);
+}
+
+export function* watchCreateNewTodo() {
+  yield takeLatest(CREATE_NEW_TODO, createNewTodoSaga);
 }

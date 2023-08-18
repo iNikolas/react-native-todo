@@ -1,3 +1,8 @@
-export {todosReducer, getTodosAction} from './slice';
+export {
+  todosReducer,
+  getTodosAction,
+  createNewTodoAction,
+  clearCreationErrorAction,
+} from './slice';
 export type {TodosStateType, TodoType} from './types';
-export {watchGetTodos} from './sagas';
+export {watchGetTodos, watchCreateNewTodo} from './sagas';

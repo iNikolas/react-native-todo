@@ -1,6 +1,7 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {Button} from 'react-native';
+
+import {BasicButton} from './basic-btn';
 
 export function NavigateBtn({
   children,
@@ -12,6 +13,6 @@ export function NavigateBtn({
   const navigation = useNavigation();
 
   return (
-    <Button title={children} onPress={() => navigation.navigate(screen)} />
+    <BasicButton title={children} onPress={() => navigation.navigate(screen)} />
   );
 }

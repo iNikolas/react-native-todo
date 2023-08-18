@@ -1,9 +1,10 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {Button} from 'react-native';
+
+import {BasicButton} from './basic-btn';
 
 export function GoBackBtn(): JSX.Element {
   const navigation = useNavigation();
 
-  return <Button title="Go back" onPress={() => navigation.goBack()} />;
+  return <BasicButton title="Go back" onPress={() => navigation.goBack()} />;
 }
