@@ -24,3 +24,17 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 
   return newTodo;
 }
+
+export async function deleteToDo(id: string): Promise<string> {
+  const todos = await getTodos();
+
+  const newTodos = todos.filter(entry => entry.id !== id);
+
+  if (newTodos.length === todos.length) {
+    throw `Unable do delete ToDo with id: ${id}`;
+  }
+
+  await AsyncStorage.setItem(todosKey, JSON.stringify(newTodos));
+
+  return id;
+}

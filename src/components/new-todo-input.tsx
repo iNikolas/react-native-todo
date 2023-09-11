@@ -3,13 +3,12 @@ import {Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {
-  StateType,
-  createNewTodoAction,
   clearCreationErrorAction,
+  createNewTodoAction,
+  StateType,
 } from '../store';
 
-import {BasicInput} from './basic-input';
-import {BasicModal} from './basic-modal';
+import {BasicInput, BasicModal} from './ui-kit';
 
 export function NewTodoInput() {
   const {isCreating} = useSelector((state: StateType) => state.todos);

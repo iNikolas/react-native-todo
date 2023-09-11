@@ -4,10 +4,12 @@ import {TODOS, TodosStateType, TodoType} from './types';
 
 const todosInitialState: TodosStateType = {
   data: null,
+  deletionQue: null,
   isLoading: false,
   isCreating: false,
   errors: '',
   creationError: '',
+  deletionError: '',
 };
 
 export const todosSlice = createSlice({
@@ -17,6 +19,33 @@ export const todosSlice = createSlice({
     getTodosAction: (state: TodosStateType) => {
       state.isLoading = true;
       state.errors = '';
+    },
+    deleteTodosAction: (
+      state: TodosStateType,
+      {payload: todosToDeleteIds}: PayloadAction<string[]>,
+    ) => {
+      if (!state.data || !state.data.length) {
+        state.deletionError = 'There is no any Todo to delete in the list';
+        return;
+      }
+
+      const {todos, deletionQue} = state.data.reduce<{
+        todos: TodoType[];
+        deletionQue: TodoType[];
+      }>(
+        (acc, todo) => {
+          if (todosToDeleteIds.includes(todo.id)) {
+            return {...acc, deletionQue: [...acc.deletionQue, todo]};
+          }
+
+          return {...acc, todos: [...acc.todos, todo]};
+        },
+        {todos: [], deletionQue: []},
+      );
+
+      state.deletionQue = deletionQue;
+      state.data = todos;
+      state.deletionError = '';
     },
     getTodosSuccessAction: (
       state: TodosStateType,
@@ -32,10 +61,7 @@ export const todosSlice = createSlice({
       state.isLoading = false;
       state.errors = error;
     },
-    createNewTodoAction: (
-      state: TodosStateType,
-      {payload: _}: PayloadAction<string>,
-    ) => {
+    createNewTodoAction: (state: TodosStateType) => {
       state.isCreating = true;
       state.creationError = '';
     },

@@ -1,7 +1,7 @@
-import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import React from 'react';
 
-import {BasicButton} from './basic-btn';
+import {BasicButton} from './ui-kit';
 
 export function NavigateBtn({
   children,
