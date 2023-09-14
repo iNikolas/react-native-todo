@@ -1,8 +1,9 @@
 import {PayloadAction} from '@reduxjs/toolkit';
-import {put, takeLatest} from 'redux-saga/effects';
+import {put, takeEvery, takeLatest} from 'redux-saga/effects';
 
 import {createNewTodo, deleteToDo, getTodos} from '../../api';
 import {
+  clearCreationErrorAction,
   createNewTodoErrorAction,
   createNewTodoSuccessAction,
   deleteTodosErrorAction,
@@ -10,6 +11,14 @@ import {
   getTodosSuccessAction,
 } from './slice';
 import {CREATE_NEW_TODO, DELETE_TODOS, GET_TODOS, TodoType} from './types';
+
+import {isRejected} from '@utils';
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+};
 
 function* getTodosSaga() {
   try {
@@ -22,6 +31,7 @@ function* getTodosSaga() {
 
 function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
   try {
+    yield put(clearCreationErrorAction());
     const newTodo: TodoType = yield createNewTodo(description);
     yield put(createNewTodoSuccessAction(newTodo));
   } catch (error) {
@@ -31,9 +41,18 @@ function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
 
 function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
   try {
-    yield Promise.all(ids.map(id => deleteToDo(id)));
+    const response: Array<PromiseSettledResult<string>> =
+      yield Promise.allSettled(ids.map(id => deleteToDo(id)));
+
+    const rejected = response.filter(isRejected).length;
+
+    if (rejected) {
+      throw `Failed to delete ${rejected} todo${rejected > 1 ? 's' : ''}`;
+    }
   } catch (error) {
-    yield put(deleteTodosErrorAction('Failed to delete'));
+    yield put(
+      deleteTodosErrorAction(getErrorMessage(error) ?? 'Failed to delete'),
+    );
   }
 }
 
@@ -46,5 +65,5 @@ export function* watchCreateNewTodo() {
 }
 
 export function* watchDeleteTodos() {
-  yield takeLatest(DELETE_TODOS, deleteTodosSaga);
+  yield takeEvery(DELETE_TODOS, deleteTodosSaga);
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import {Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {errorTypes} from '@constants';
+
 import {
   clearCreationErrorAction,
   createNewTodoAction,
@@ -30,7 +32,9 @@ export function NewTodoInput() {
 }
 
 function ErrorModal() {
-  const {creationError} = useSelector((state: StateType) => state.todos);
+  const {errors} = useSelector((state: StateType) => state.todos);
+
+  const creationError = errors.some(e => e.type === errorTypes.creationError);
 
   const dispatch = useDispatch();
 

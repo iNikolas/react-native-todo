@@ -1,15 +1,14 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {errorTypes} from '@src/constants';
 
 import {TODOS, TodosStateType, TodoType} from './types';
 
 const todosInitialState: TodosStateType = {
   data: null,
-  deletionQue: null,
   isLoading: false,
   isCreating: false,
-  errors: '',
-  creationError: '',
-  deletionError: '',
+  isDeleting: false,
+  errors: [],
 };
 
 export const todosSlice = createSlice({
@@ -18,27 +17,40 @@ export const todosSlice = createSlice({
   reducers: {
     getTodosAction: (state: TodosStateType) => {
       state.isLoading = true;
-      state.errors = '';
+      state.errors = [];
     },
     deleteTodosAction: (
       state: TodosStateType,
       {payload: todosToDeleteIds}: PayloadAction<string[]>,
     ) => {
       if (!state.data || !state.data.length) {
-        state.deletionError = 'There is no any Todo to delete in the list';
+        state.errors = [
+          ...state.errors,
+          {
+            type: errorTypes.deletionError,
+            message: 'There is no any Todo to delete in the list',
+          },
+        ];
         return;
       }
 
       state.data = state.data.filter(
         entry => !todosToDeleteIds.includes(entry.id),
       );
-      state.deletionError = '';
+      state.isDeleting = true;
     },
     deleteTodosErrorAction: (
       state: TodosStateType,
       {payload: error}: PayloadAction<string>,
     ) => {
-      state.deletionError = error;
+      state.errors = [
+        ...state.errors,
+        {type: errorTypes.deletionError, message: error},
+      ];
+      state.isDeleting = false;
+    },
+    deleteTodosSuccessAction: (state: TodosStateType) => {
+      state.isDeleting = false;
     },
     getTodosSuccessAction: (
       state: TodosStateType,
@@ -52,11 +64,13 @@ export const todosSlice = createSlice({
       {payload: error}: PayloadAction<string>,
     ) => {
       state.isLoading = false;
-      state.errors = error;
+      state.errors = [
+        ...state.errors,
+        {type: errorTypes.fetchError, message: error},
+      ];
     },
-    createNewTodoAction: (state: TodosStateType) => {
+    createNewTodoAction: (state: TodosStateType, _: PayloadAction<string>) => {
       state.isCreating = true;
-      state.creationError = '';
     },
     createNewTodoSuccessAction: (
       state: TodosStateType,
@@ -70,10 +84,15 @@ export const todosSlice = createSlice({
       {payload: error}: PayloadAction<string>,
     ) => {
       state.isCreating = false;
-      state.creationError = error;
+      state.errors = [
+        ...state.errors,
+        {type: errorTypes.creationError, message: error},
+      ];
     },
     clearCreationErrorAction: (state: TodosStateType) => {
-      state.creationError = '';
+      state.errors = state.errors.filter(
+        e => e.type !== errorTypes.creationError,
+      );
     },
   },
 });

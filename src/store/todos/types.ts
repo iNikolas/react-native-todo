@@ -1,3 +1,9 @@
+import {errorTypes} from '@constants';
+
+type ObjectValues<T> = T[keyof T];
+
+type ErrorType = {type: ObjectValues<typeof errorTypes>; message: string};
+
 export type TodoType = {
   id: string;
   isDone: boolean;
@@ -7,12 +13,10 @@ export type TodoType = {
 
 export type TodosStateType = {
   data: TodoType[] | null;
-  deletionQue: TodoType[] | null;
   isLoading: boolean;
   isCreating: boolean;
-  errors: string;
-  creationError: string;
-  deletionError: string;
+  isDeleting: boolean;
+  errors: ErrorType[];
 };
 
 export const TODOS = 'todos';

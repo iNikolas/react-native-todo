@@ -8,6 +8,8 @@ module.exports = {
         alias: {
           '@src': './src',
           '@utils': './src/utils',
+          '@api': './src/api',
+          '@constants': './src/constants',
         },
       },
     ],
