@@ -1,9 +1,10 @@
+export type {StateType} from './root-reducer';
 export * from './store';
 export {
-  getTodosAction,
-  createNewTodoAction,
   clearCreationErrorAction,
+  createNewTodoAction,
+  deleteTodosAction,
+  editTodosAction,
+  getTodosAction,
 } from './todos';
-
 export type {TodoType} from './todos';
-export type {StateType} from './root-reducer';

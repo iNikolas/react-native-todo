@@ -10,6 +10,8 @@ module.exports = {
           '@utils': './src/utils',
           '@api': './src/api',
           '@constants': './src/constants',
+          '@store': './src/store',
+          '@types': './src/types',
         },
       },
     ],

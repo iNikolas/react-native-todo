@@ -1,6 +1,5 @@
 import {errorTypes} from '@constants';
-
-type ObjectValues<T> = T[keyof T];
+import {ObjectValues} from '@types';
 
 type ErrorType = {type: ObjectValues<typeof errorTypes>; message: string};
 
@@ -16,6 +15,7 @@ export type TodosStateType = {
   isLoading: boolean;
   isCreating: boolean;
   isDeleting: boolean;
+  isUpdating: boolean;
   errors: ErrorType[];
 };
 
@@ -27,3 +27,4 @@ export type GET_TODOS = typeof GET_TODOS;
 
 export const CREATE_NEW_TODO = `${TODOS}/createNewTodoAction`;
 export const DELETE_TODOS = `${TODOS}/deleteTodosAction`;
+export const EDIT_TODOS = `${TODOS}/editTodosAction`;

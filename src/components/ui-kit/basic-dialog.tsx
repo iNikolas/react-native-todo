@@ -3,21 +3,28 @@ import {Modal, ModalProps, View} from 'react-native';
 
 import {BasicButton} from './basic-btn';
 
-export function BasicModal({
+export function BasicDialog({
   children,
   onClose,
-  confirmBtnText,
+  closeDialogBtnText = 'OK',
+  extraBtns,
   ...modalProps
 }: {
   children: JSX.Element;
   onClose: () => void;
-  confirmBtnText?: string;
+  closeDialogBtnText?: string;
+  extraBtns?: JSX.Element;
 } & ModalProps) {
   return (
     <Modal animationType="slide" {...modalProps}>
       <View>
         {children}
-        <BasicButton onPress={onClose} title={confirmBtnText ?? 'OK'} />
+        {
+          <View>
+            {extraBtns}
+            <BasicButton onPress={onClose} title={closeDialogBtnText} />
+          </View>
+        }
       </View>
     </Modal>
   );

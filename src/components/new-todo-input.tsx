@@ -10,7 +10,7 @@ import {
   StateType,
 } from '../store';
 
-import {BasicInput, BasicModal} from './ui-kit';
+import {BasicDialog, BasicInput} from './ui-kit';
 
 export function NewTodoInput() {
   const {isCreating} = useSelector((state: StateType) => state.todos);
@@ -34,16 +34,16 @@ export function NewTodoInput() {
 function ErrorModal() {
   const {errors} = useSelector((state: StateType) => state.todos);
 
-  const creationError = errors.some(e => e.type === errorTypes.creationError);
+  const creationError = errors.find(e => e.type === errorTypes.creationError);
 
   const dispatch = useDispatch();
 
   return (
-    <BasicModal
+    <BasicDialog
       visible={Boolean(creationError)}
       onClose={() => dispatch(clearCreationErrorAction())}>
-      <Text>{creationError}</Text>
-    </BasicModal>
+      <Text>{creationError?.message}</Text>
+    </BasicDialog>
   );
 }
 
@@ -63,8 +63,8 @@ function SuccessModal() {
   }, [isCreating, todosListLength]);
 
   return (
-    <BasicModal visible={showModal} onClose={() => setShowModal(false)}>
+    <BasicDialog visible={showModal} onClose={() => setShowModal(false)}>
       <Text>Your Todo was successfully created!</Text>
-    </BasicModal>
+    </BasicDialog>
   );
 }
