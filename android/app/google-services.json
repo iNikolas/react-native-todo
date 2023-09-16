@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "947621569592",
+    "project_id": "react-native-todo-app-4cf96",
+    "storage_bucket": "react-native-todo-app-4cf96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947621569592:android:503870389cf03667dc32cd",
+        "android_client_info": {
+          "package_name": "com.reactnativetodoshowcase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkiWs2zuPxrpyeQ5nNBW_JJ8sFXEw_kzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
