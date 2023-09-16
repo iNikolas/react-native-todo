@@ -1,7 +1,13 @@
 import {PayloadAction} from '@reduxjs/toolkit';
 import {put, takeLatest} from 'redux-saga/effects';
 
-import {createNewTodo, deleteTodos, editTodo, getTodos} from '@api';
+import {
+  createNewTodo,
+  deleteTodos,
+  editTodo,
+  getTodos,
+  invalidateCache,
+} from '@api';
 import {EditTodoType} from '@types';
 import {isRejected} from '@utils';
 
@@ -36,6 +42,7 @@ function* getTodosSaga() {
     const todos: TodoType[] = yield getTodos();
     yield put(getTodosSuccessAction(todos));
   } catch (error) {
+    yield invalidateCache();
     yield put(getTodosErrorAction('Failed to fetch TosDo List'));
   }
 }
@@ -62,6 +69,7 @@ function* editTodosSaga({
         getErrorMessage(error) ?? 'Failed to edit for unknown reason',
       ),
     );
+    yield invalidateCache();
     yield put(getTodosAction());
   }
 }
@@ -99,6 +107,7 @@ function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
         getErrorMessage(error) ?? 'Failed to delete for unknown reason',
       ),
     );
+    yield invalidateCache();
     yield put(getTodosAction());
   }
 }

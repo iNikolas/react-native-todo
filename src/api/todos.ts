@@ -10,6 +10,13 @@ const publicTodos = 'public-todos';
 
 const cacheTimeToLiveHours = 2;
 
+export async function invalidateCache() {
+  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
+
+  await AsyncStorage.removeItem(cacheValidationKey);
+}
+
 export async function getTodos(): Promise<TodoType[]> {
   const asyncStorageKey = `${todosKey}/${publicTodos}`;
   const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
