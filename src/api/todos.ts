@@ -1,46 +1,106 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 import {TodoType} from '@store';
 import {EditTodoType} from '@types';
 
 const todosKey = 'todos-react-native-app-iNikolas';
+const validationTimeKey = 'validation-time-key';
+const publicTodos = 'public-todos';
+
+const cacheTimeToLiveHours = 2;
 
 export async function getTodos(): Promise<TodoType[]> {
-  const response = await AsyncStorage.getItem(todosKey);
+  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
 
-  return response ? JSON.parse(response) : [];
+  const cacheValidationTimestamp = await AsyncStorage.getItem(
+    cacheValidationKey,
+  );
+
+  const cacheCreated = new Date(
+    cacheValidationTimestamp ? JSON.parse(cacheValidationTimestamp) : '',
+  );
+  const cacheLastedHours =
+    (new Date().getTime() - cacheCreated.getTime()) / (1000 * 60 * 60);
+
+  if (cacheTimeToLiveHours > cacheLastedHours) {
+    const response = await AsyncStorage.getItem(asyncStorageKey);
+
+    return response ? JSON.parse(response) : [];
+  }
+
+  const response = await firestore().collection(publicTodos).get();
+
+  const result: {value: TodoType[]} = {value: []};
+
+  response.forEach(doc => {
+    const data = doc.data();
+    result.value = [
+      ...result.value,
+      {
+        id: doc.id,
+        description: data.description,
+        isDone: data.isDone,
+        created: data.created,
+      },
+    ];
+  });
+
+  await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(result.value));
+  await AsyncStorage.setItem(cacheValidationKey, JSON.stringify(new Date()));
+
+  return result.value;
 }
 
 export async function createNewTodo(description: string): Promise<TodoType> {
-  const newTodo: TodoType = {
-    id: `${Math.random()}`,
+  const newTodo: Omit<TodoType, 'id'> = {
     description,
     created: new Date().toString(),
     isDone: false,
   };
 
+  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+
+  const {id} = await firestore().collection(publicTodos).add(newTodo);
+
   const todos = await getTodos();
 
-  await AsyncStorage.setItem(todosKey, JSON.stringify([newTodo, ...todos]));
+  const result = {...newTodo, id};
 
-  return newTodo;
+  await AsyncStorage.setItem(
+    asyncStorageKey,
+    JSON.stringify([result, ...todos]),
+  );
+
+  return result;
 }
 
-export async function deleteToDo(id: string): Promise<string> {
+export async function deleteTodos(ids: string[]): Promise<void> {
+  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+
+  const todosSnapshot = await firestore().collection(publicTodos).get();
+  const batch = firestore().batch();
+
+  todosSnapshot.forEach(documentSnapshot => {
+    batch.delete(documentSnapshot.ref);
+  });
+
+  await batch.commit();
+
   const todos = await getTodos();
 
-  const newTodos = todos.filter(entry => entry.id !== id);
+  const newTodos = todos.filter(entry => !ids.includes(entry.id));
 
   if (newTodos.length === todos.length) {
-    throw `Unable do delete ToDo with id: ${id}`;
+    throw `Unable do delete ToDo with id: ${ids}`;
   }
 
-  await AsyncStorage.setItem(todosKey, JSON.stringify(newTodos));
-
-  return id;
+  return await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
 }
 
 export async function editTodo(todo: EditTodoType): Promise<TodoType> {
+  const asyncStorageKey = `${todosKey}/${publicTodos}`;
   const todos = await getTodos();
 
   const {newTodos, editedTodo} = todos.reduce<{
@@ -63,10 +123,15 @@ export async function editTodo(todo: EditTodoType): Promise<TodoType> {
   );
 
   if (!editedTodo) {
-    throw `There is no ToDo with id ${todo.id} you are trying to delete!`;
+    throw `There is no ToDo with id ${todo.id} you are trying to edit!`;
   }
 
-  await AsyncStorage.setItem(todosKey, JSON.stringify(newTodos));
+  const doc: Partial<EditTodoType> = {...todo};
+  delete doc?.id;
+
+  await firestore().collection(publicTodos).doc(todo.id).update(doc);
+
+  await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
 
   return editedTodo;
 }

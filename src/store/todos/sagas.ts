@@ -1,7 +1,7 @@
 import {PayloadAction} from '@reduxjs/toolkit';
-import {put, takeEvery, takeLatest} from 'redux-saga/effects';
+import {put, takeLatest} from 'redux-saga/effects';
 
-import {createNewTodo, deleteToDo, editTodo, getTodos} from '@api';
+import {createNewTodo, deleteTodos, editTodo, getTodos} from '@api';
 import {EditTodoType} from '@types';
 import {isRejected} from '@utils';
 
@@ -72,14 +72,19 @@ function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
     const newTodo: TodoType = yield createNewTodo(description);
     yield put(createNewTodoSuccessAction(newTodo));
   } catch (error) {
-    yield put(createNewTodoErrorAction('Failed to create new ToDo'));
+    yield put(
+      createNewTodoErrorAction(
+        getErrorMessage(error) ?? 'Failed to create for unknown reason',
+      ),
+    );
   }
 }
 
 function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
   try {
-    const response: Array<PromiseSettledResult<string>> =
-      yield Promise.allSettled(ids.map(id => deleteToDo(id)));
+    const response: Array<PromiseSettledResult<string>> = yield deleteTodos(
+      ids,
+    );
 
     const rejected = response.filter(isRejected).length;
 
@@ -107,7 +112,7 @@ export function* watchCreateNewTodo() {
 }
 
 export function* watchDeleteTodos() {
-  yield takeEvery(DELETE_TODOS, deleteTodosSaga);
+  yield takeLatest(DELETE_TODOS, deleteTodosSaga);
 }
 
 export function* watchEditTodos() {

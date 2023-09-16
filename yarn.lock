@@ -1695,13 +1695,18 @@
     "prompts" "^2.4.0"
     "semver" "^7.5.2"
 
-"@react-native-firebase/app@^18.4.0":
+"@react-native-firebase/app@^18.4.0", "@react-native-firebase/app@18.4.0":
   "integrity" "sha512-FPHwb4O5Bug5Q5WOfSPq38LHGrTRBIThNvs7Fl7OfotGpMbWKMCfwc5RN7F+PRRDeHyk2WDYvoH905zla1pPcw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/app/-/app-18.4.0.tgz"
   "version" "18.4.0"
   dependencies:
     "opencollective-postinstall" "^2.0.1"
     "superstruct" "^0.6.2"
+
+"@react-native-firebase/firestore@^18.4.0":
+  "integrity" "sha512-YMY5yzSxo5csQp98d9r8wGFEshRbg7eVMjTU/WnLSvdzNFpsaz3n2dRPFFEwGwYFy7b09XQLRb8XYmhNiWKsWw=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/firestore/-/firestore-18.4.0.tgz"
+  "version" "18.4.0"
 
 "@react-native/assets-registry@^0.72.0":
   "integrity" "sha512-Im93xRJuHHxb1wniGhBMsxLwcfzdYreSZVQGDoMJgkd6+Iky61LInGEHnQCTN0fKNYF1Dvcofb4uMmE1RQHXHQ=="
