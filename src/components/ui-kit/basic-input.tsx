@@ -1,13 +1,17 @@
+import {Box, BoxProps} from '@rneui/layout';
+import {ButtonProps} from '@rneui/themed';
 import React from 'react';
-import {TextInput, View, ViewProps} from 'react-native';
+import {TextInput} from 'react-native';
+
 import {BasicButton} from './basic-btn';
 
 export function BasicInput({
-  btnText,
+  btnText = 'Add',
   placeholder = 'Your text',
   onPress,
   disabled,
   initialText = '',
+  btnProps,
   ...viewProps
 }: {
   btnText?: string;
@@ -15,11 +19,12 @@ export function BasicInput({
   disabled?: boolean;
   onPress: (text: string) => void;
   initialText?: string;
-} & ViewProps) {
+  btnProps?: ButtonProps;
+} & BoxProps) {
   const [text, setText] = React.useState(initialText);
 
   return (
-    <View {...viewProps}>
+    <Box {...viewProps}>
       <TextInput
         value={text}
         placeholder={placeholder}
@@ -31,8 +36,9 @@ export function BasicInput({
           setText('');
           onPress(text);
         }}
-        title={btnText ?? 'Add'}
+        title={btnText}
+        {...btnProps}
       />
-    </View>
+    </Box>
   );
 }

@@ -12,6 +12,7 @@ module.exports = {
           '@constants': './src/constants',
           '@store': './src/store',
           '@types': './src/types',
+          '@theme': './src/theme',
         },
       },
     ],

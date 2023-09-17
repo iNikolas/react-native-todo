@@ -1,9 +1,15 @@
 import React from 'react';
 import {useDispatch} from 'react-redux';
+import {styled} from 'styled-components/native';
 
 import {editTodosAction} from '@store';
 
 import {BasicInput} from '../../../../ui-kit';
+
+const Input = styled(BasicInput)`
+  display: flex;
+  flex-direction: row;
+`;
 
 export function EditableDescriptionField({
   initialText,
@@ -24,7 +30,7 @@ export function EditableDescriptionField({
   };
 
   return (
-    <BasicInput
+    <Input
       btnText="OK"
       initialText={initialText}
       onPress={handleUpdateDescription}

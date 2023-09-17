@@ -1,12 +1,16 @@
+import {useFocusEffect} from '@react-navigation/native';
+import {Stack} from '@rneui/layout';
+import {useTheme} from '@rneui/themed';
 import React from 'react';
-import {FlatList, Text, TouchableHighlight, View} from 'react-native';
+import {FlatList, Text, TouchableHighlight} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {routes} from '@src/app/router';
 import {editTodosAction, getTodosAction, StateType, TodoType} from '@store';
 import {EditTodoTableType} from '@types';
 
-import {useFocusEffect} from '@react-navigation/native';
-import {BasicButton} from '../ui-kit';
+import {NavigateBtn} from '../navigate-btn';
+import {BasicButton, BasicIcon} from '../ui-kit';
 import {DeleteTodoDialog, FilterTodos, Todo} from './components';
 import {filterTypes} from './components/filter-todos/constants';
 import {FilterTypes} from './components/filter-todos/types';
@@ -14,6 +18,8 @@ import {updateType} from './constants';
 import {UpdateType} from './types';
 
 export function TodosList(): JSX.Element {
+  const {theme} = useTheme();
+
   const {data, isLoading, isDeleting, isUpdating} = useSelector(
     (state: StateType) => state.todos,
   );
@@ -116,33 +122,55 @@ export function TodosList(): JSX.Element {
     <Text>Loading</Text>
   ) : (
     <>
+      <NavigateBtn screen={routes.createTodo}>
+        New
+        <BasicIcon name="create" type="ionicon" color={theme.colors.primary} />
+      </NavigateBtn>
       {showCheckboxes && (
-        <View>
-          <BasicButton title="Cancel" onPress={handleCancelSelection} />
+        <Stack row align="center" justify="space-around" spacing={1}>
+          <BasicButton type="clear" onPress={handleCancelSelection}>
+            <BasicIcon name="back" type="entypo" />
+          </BasicButton>
           <BasicButton
+            type="clear"
             disabled={selectedIds.size === 0 || isDeleting}
-            title={isDeleting ? 'Deleting...' : 'Delete'}
-            onPress={() => setShowDeleteDialog(true)}
-          />
+            loading={isDeleting}
+            onPress={() => setShowDeleteDialog(true)}>
+            <BasicIcon
+              {...(selectedIds.size === 0 && {color: theme.colors.disabled})}
+              name="delete"
+            />
+          </BasicButton>
           <BasicButton
+            type="clear"
             disabled={selectedIds.size === 0 || isUpdating}
-            title={
-              isUpdating
-                ? 'Updating...'
-                : `Mark ${selectedIds.size > 1 ? ' all' : ''} Done`
-            }
-            onPress={handleUpdate(updateType.done)}
-          />
+            loading={isUpdating}
+            onPress={handleUpdate(updateType.undone)}>
+            <BasicIcon
+              color={
+                selectedIds.size === 0
+                  ? theme.colors.disabled
+                  : theme.colors.warning
+              }
+              name="remove-done"
+            />
+          </BasicButton>
           <BasicButton
+            type="clear"
             disabled={selectedIds.size === 0 || isUpdating}
-            title={
-              isUpdating
-                ? 'Updating...'
-                : `Mark ${selectedIds.size > 1 ? ' all' : ''} Undone`
-            }
-            onPress={handleUpdate(updateType.undone)}
-          />
-        </View>
+            loading={isUpdating}
+            onPress={handleUpdate(updateType.done)}>
+            <BasicIcon
+              color={
+                selectedIds.size === 0
+                  ? theme.colors.disabled
+                  : theme.colors.success
+              }
+              name={selectedIds.size > 1 ? 'checkmark-done' : 'checkmark'}
+              type="ionicon"
+            />
+          </BasicButton>
+        </Stack>
       )}
       {!showCheckboxes && (
         <FilterTodos

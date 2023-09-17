@@ -1,10 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 
-import {BasicButton} from './ui-kit';
+import {BasicButton, BasicIcon} from './ui-kit';
 
 export function GoBackBtn(): JSX.Element {
   const navigation = useNavigation();
 
-  return <BasicButton title="Go back" onPress={() => navigation.goBack()} />;
+  return (
+    <BasicButton type="clear" onPress={() => navigation.goBack()}>
+      <BasicIcon name="arrow-back-circle-sharp" type="ionicon" />
+    </BasicButton>
+  );
 }

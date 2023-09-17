@@ -1,3 +1,4 @@
+import {useTheme} from '@rneui/themed';
 import React from 'react';
 import {Text} from 'react-native';
 import {useDispatch} from 'react-redux';
@@ -13,6 +14,7 @@ export function DeleteTodoDialog({
   onClose,
   show,
 }: DeleteDialogProps) {
+  const {theme} = useTheme();
   const amount = que.length;
 
   const dispatch = useDispatch();
@@ -25,7 +27,9 @@ export function DeleteTodoDialog({
   return (
     <BasicDialog
       closeDialogBtnText="Cancel"
-      extraBtns={<BasicButton onPress={handleDeletion} title={'Delete'} />}
+      extraBtns={
+        <BasicButton color="error" onPress={handleDeletion} title={'Delete'} />
+      }
       onClose={onClose}
       visible={show}>
       <Text>{`Do you really want to delete ${amount} ToDo${

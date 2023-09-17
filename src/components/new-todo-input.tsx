@@ -20,6 +20,7 @@ export function NewTodoInput() {
   return (
     <>
       <BasicInput
+        btnProps={{loading: isCreating}}
         disabled={isCreating}
         onPress={(description: string) =>
           dispatch(createNewTodoAction(description))

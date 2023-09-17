@@ -1,7 +1,7 @@
 import React from 'react';
 import {Modal, ModalProps, View} from 'react-native';
 
-import {BasicButton} from './basic-btn';
+import {BasicButton} from './basic-btn/basic-btn';
 
 export function BasicDialog({
   children,
@@ -22,7 +22,11 @@ export function BasicDialog({
         {
           <View>
             {extraBtns}
-            <BasicButton onPress={onClose} title={closeDialogBtnText} />
+            <BasicButton
+              type="clear"
+              onPress={onClose}
+              title={closeDialogBtnText}
+            />
           </View>
         }
       </View>

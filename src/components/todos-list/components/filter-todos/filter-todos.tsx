@@ -1,9 +1,15 @@
+import {Stack} from '@rneui/layout';
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text} from 'react-native';
+import styled from 'styled-components/native';
 
 import {BasicCheckbox} from '../../../ui-kit';
 import {filterTypes} from './constants';
 import {FilterTypes} from './types';
+
+const StyledStack = styled(Stack)`
+  padding: 0 4px 4px 4px;
+`;
 
 export function FilterTodos({
   onFilterChange,
@@ -37,22 +43,22 @@ export function FilterTodos({
   };
 
   return (
-    <View>
-      <Text>Show</Text>
-      <View>
-        <Text>done: </Text>
+    <StyledStack row align="center" justify="flex-end" spacing={1}>
+      <Text>Show:</Text>
+      <Stack row align="center" spacing={1}>
+        <Text>done</Text>
         <BasicCheckbox
           value={done}
           onValueChange={handleCheckboxChange(filterTypes.done)}
         />
-      </View>
-      <View>
-        <Text>undone: </Text>
+      </Stack>
+      <Stack row align="center" spacing={1}>
+        <Text>undone</Text>
         <BasicCheckbox
           value={undone}
           onValueChange={handleCheckboxChange(filterTypes.undone)}
         />
-      </View>
-    </View>
+      </Stack>
+    </StyledStack>
   );
 }
