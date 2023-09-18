@@ -1,6 +1,6 @@
 import {Box as NativeBox} from '@rneui/layout';
 import React from 'react';
-import {Text} from 'react-native';
+import {Text, View as NativeView} from 'react-native';
 import styled from 'styled-components/native';
 
 import {TodoType} from '@store';
@@ -13,7 +13,7 @@ import {TodoListProps} from './types';
 
 const bgOpacity = 0.2;
 
-const Box = styled(NativeBox)`
+const Box = styled(NativeView)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,7 +23,6 @@ const Box = styled(NativeBox)`
 const View = styled(NativeBox)<{isDone: boolean}>`
   display: flex;
   flex-direction: row;
-  justify-content: flex-between;
   background-color: ${({isDone}) =>
     isDone
       ? convertColorToRGBA(theme.darkColors?.success ?? 'green', bgOpacity)
@@ -59,10 +58,12 @@ export function Todo({
     <View isDone={isDone}>
       {showCheckboxes && (
         <Box>
-          <BasicCheckbox value={selected} onValueChange={onSelectionChange} />
+          <BasicCheckbox checked={selected} onPress={onSelectionChange} />
         </Box>
       )}
-      {!showCheckboxes && <Created>{getTimeFromNow(created)}</Created>}
+      {!showCheckboxes && !editable && (
+        <Created>{getTimeFromNow(created)}</Created>
+      )}
       <Description>
         {editable ? (
           <EditableDescriptionField

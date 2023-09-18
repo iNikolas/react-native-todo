@@ -191,13 +191,13 @@ export function TodosList(): JSX.Element {
               onFinishEditing={() => setEditableTodoId('')}
               selected={selectedIds.has(item.id)}
               showCheckboxes={showCheckboxes}
-              onSelectionChange={(isSelected: boolean) =>
+              onSelectionChange={() =>
                 setSelectedIds(
                   prevSelected =>
                     new Set(
-                      isSelected
-                        ? [...prevSelected, item.id]
-                        : [...prevSelected].filter(id => id !== item.id),
+                      prevSelected.has(item.id)
+                        ? [...prevSelected].filter(id => id !== item.id)
+                        : [...prevSelected, item.id],
                     ),
                 )
               }

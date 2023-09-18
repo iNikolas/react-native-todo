@@ -4,7 +4,7 @@ import {styled} from 'styled-components/native';
 
 import {editTodosAction} from '@store';
 
-import {BasicInput} from '../../../../ui-kit';
+import {BasicIcon, BasicInput} from '../../../../ui-kit';
 
 const Input = styled(BasicInput)`
   display: flex;
@@ -31,7 +31,8 @@ export function EditableDescriptionField({
 
   return (
     <Input
-      btnText="OK"
+      btnContent={<BasicIcon name="edit" />}
+      btnProps={{type: 'clear'}}
       initialText={initialText}
       onPress={handleUpdateDescription}
     />

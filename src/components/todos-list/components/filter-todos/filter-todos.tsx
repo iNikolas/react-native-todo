@@ -20,19 +20,19 @@ export function FilterTodos({
   undone: boolean;
   onFilterChange: (filterType: FilterTypes[]) => void;
 }) {
-  const handleCheckboxChange = (type: FilterTypes) => (checked: boolean) => {
+  const handleCheckboxChange = (type: FilterTypes) => () => {
     const filters: FilterTypes[] = [];
 
     if (
-      (checked && type === filterTypes.done) ||
-      (!(type === filterTypes.done) && done)
+      (type === filterTypes.done && !done) ||
+      (type !== filterTypes.done && done)
     ) {
       filters.push(filterTypes.done);
     }
 
     if (
-      (checked && type === filterTypes.undone) ||
-      (!(type === filterTypes.undone) && undone)
+      (type === filterTypes.undone && !undone) ||
+      (type !== filterTypes.undone && undone)
     ) {
       filters.push(filterTypes.undone);
     }
@@ -45,20 +45,16 @@ export function FilterTodos({
   return (
     <StyledStack row align="center" justify="flex-end" spacing={1}>
       <Text>Show:</Text>
-      <Stack row align="center" spacing={1}>
-        <Text>done</Text>
-        <BasicCheckbox
-          value={done}
-          onValueChange={handleCheckboxChange(filterTypes.done)}
-        />
-      </Stack>
-      <Stack row align="center" spacing={1}>
-        <Text>undone</Text>
-        <BasicCheckbox
-          value={undone}
-          onValueChange={handleCheckboxChange(filterTypes.undone)}
-        />
-      </Stack>
+      <BasicCheckbox
+        checked={done}
+        title="done"
+        onPress={handleCheckboxChange(filterTypes.done)}
+      />
+      <BasicCheckbox
+        title="undone"
+        checked={undone}
+        onPress={handleCheckboxChange(filterTypes.undone)}
+      />
     </StyledStack>
   );
 }

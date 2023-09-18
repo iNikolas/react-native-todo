@@ -1,7 +1,14 @@
+import {Stack as NativeStack} from '@rneui/layout';
+import {Dialog} from '@rneui/themed';
 import React from 'react';
-import {Modal, ModalProps, View} from 'react-native';
+import {ModalProps, View} from 'react-native';
+import {styled} from 'styled-components/native';
 
 import {BasicButton} from './basic-btn/basic-btn';
+
+const Stack = styled(NativeStack)`
+  margin-top: 8px;
+`;
 
 export function BasicDialog({
   children,
@@ -16,20 +23,18 @@ export function BasicDialog({
   extraBtns?: JSX.Element;
 } & ModalProps) {
   return (
-    <Modal animationType="slide" {...modalProps}>
+    <Dialog animationType="slide" {...modalProps}>
       <View>
         {children}
-        {
-          <View>
-            {extraBtns}
-            <BasicButton
-              type="clear"
-              onPress={onClose}
-              title={closeDialogBtnText}
-            />
-          </View>
-        }
+        <Stack row align="center" justify="flex-end" spacing={1}>
+          <BasicButton
+            type="clear"
+            onPress={onClose}
+            title={closeDialogBtnText}
+          />
+          {extraBtns}
+        </Stack>
       </View>
-    </Modal>
+    </Dialog>
   );
 }
