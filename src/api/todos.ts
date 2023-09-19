@@ -16,7 +16,8 @@ async function synchronizeWithDatabase({
   cache: TodoType[];
 }): Promise<TodoType[]> {
   try {
-    const response = await firestore().collection(publicTodos).get();
+    const todosCollection = firestore().collection(publicTodos);
+    const response = await todosCollection.get();
 
     const responseNormalized: {value: TodoType[]} = {value: []};
 
@@ -42,10 +43,7 @@ async function synchronizeWithDatabase({
 
     await Promise.allSettled(
       newLocalEntries.map(({id, isDone, description, created}) =>
-        firestore()
-          .collection(publicTodos)
-          .doc(id)
-          .set({description, isDone, created}),
+        todosCollection.doc(id).set({description, isDone, created}),
       ),
     );
 
@@ -108,10 +106,6 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 
   const todos = await getTodos();
 
-  try {
-    await firestoreDoc.set(newTodo);
-  } catch (_) {}
-
   const result = {...newTodo, id: firestoreDoc.id};
 
   await AsyncStorage.setItem(
@@ -125,6 +119,13 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 export async function deleteTodos(ids: string[]): Promise<void> {
   const asyncStorageKey = `${todosKey}/${publicTodos}`;
 
+  const todos = await getTodos();
+  const newTodos = todos.filter(entry => !ids.includes(entry.id));
+
+  if (newTodos.length === todos.length) {
+    throw new Error('Unable do delete some ToDos');
+  }
+
   const databaseTodos = firestore().collection(publicTodos);
   const batch = firestore().batch();
 
@@ -132,15 +133,7 @@ export async function deleteTodos(ids: string[]): Promise<void> {
     batch.delete(databaseTodos.doc(id));
   });
 
-  await batch.commit();
-
-  const todos = await getTodos();
-
-  const newTodos = todos.filter(entry => !ids.includes(entry.id));
-
-  if (newTodos.length === todos.length) {
-    throw new Error('Unable do delete some ToDos');
-  }
+  batch.commit();
 
   return await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
 }
@@ -175,11 +168,8 @@ export async function editTodo(todo: EditTodoType): Promise<TodoType> {
   const doc: Partial<EditTodoType> = {...todo};
   delete doc?.id;
 
-  try {
-    await firestore().collection(publicTodos).doc(todo.id).update(doc);
-  } catch (_) {}
-
   await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
+  firestore().collection(publicTodos).doc(todo.id).update(doc);
 
   return editedTodo;
 }
