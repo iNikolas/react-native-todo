@@ -1,13 +1,7 @@
 import {PayloadAction} from '@reduxjs/toolkit';
 import {put, takeLatest} from 'redux-saga/effects';
 
-import {
-  createNewTodo,
-  deleteTodos,
-  editTodo,
-  getTodos,
-  invalidateCache,
-} from '@api';
+import {todoApi} from '@api';
 import {EditTodoType} from '@types';
 import {isRejected} from '@utils';
 
@@ -39,10 +33,10 @@ const getErrorMessage = (error: unknown) => {
 
 function* getTodosSaga() {
   try {
-    const todos: TodoType[] = yield getTodos();
+    const todos: TodoType[] = yield todoApi.getTodos();
     yield put(getTodosSuccessAction(todos));
   } catch (error) {
-    yield invalidateCache();
+    yield todoApi.invalidateCache();
     yield put(getTodosErrorAction('Failed to fetch TosDo List'));
   }
 }
@@ -54,7 +48,9 @@ function* editTodosSaga({
     const ids = Object.keys(editTodosTable);
 
     const response: Array<PromiseSettledResult<TodoType>> =
-      yield Promise.allSettled(ids.map(id => editTodo(editTodosTable[id])));
+      yield Promise.allSettled(
+        ids.map(id => todoApi.editTodo(editTodosTable[id])),
+      );
 
     const rejected = response.filter(isRejected).length;
 
@@ -69,7 +65,7 @@ function* editTodosSaga({
         getErrorMessage(error) ?? 'Failed to edit for unknown reason',
       ),
     );
-    yield invalidateCache();
+    yield todoApi.invalidateCache();
     yield put(getTodosAction());
   }
 }
@@ -77,7 +73,7 @@ function* editTodosSaga({
 function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
   try {
     yield put(clearCreationErrorAction());
-    const newTodo: TodoType = yield createNewTodo(description);
+    const newTodo: TodoType = yield todoApi.createNewTodo(description);
     yield put(createNewTodoSuccessAction(newTodo));
   } catch (error) {
     yield put(
@@ -90,7 +86,7 @@ function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
 
 function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
   try {
-    yield deleteTodos(ids);
+    yield todoApi.deleteTodos(ids);
     yield put(deleteTodosSuccessAction());
   } catch (error) {
     yield put(
@@ -98,7 +94,7 @@ function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
         getErrorMessage(error) ?? 'Failed to delete for unknown reason',
       ),
     );
-    yield invalidateCache();
+    yield todoApi.invalidateCache();
     yield put(getTodosAction());
   }
 }
