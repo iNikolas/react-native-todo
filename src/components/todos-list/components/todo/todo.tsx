@@ -53,7 +53,6 @@ export function Todo({
   id,
   onFinishEditing,
 }: TodoType & TodoListProps) {
-  theme.lightColors?.success;
   return (
     <View isDone={isDone}>
       {showCheckboxes && (

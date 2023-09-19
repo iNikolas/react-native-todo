@@ -3,6 +3,7 @@ import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import {Provider} from 'react-redux';
 
+import {ErrorDialog} from '@src/components';
 import {store} from '@store';
 import {theme} from '@theme';
 
@@ -17,6 +18,7 @@ export function App(): JSX.Element {
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <AppRouter />
+          <ErrorDialog />
         </ThemeProvider>
       </Provider>
     </>

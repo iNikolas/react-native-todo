@@ -1,6 +1,7 @@
 export {watchCreateNewTodo, watchGetTodos} from './sagas';
 export {
   clearCreationErrorAction,
+  clearErrorsAction,
   createNewTodoAction,
   deleteTodosAction,
   editTodosAction,

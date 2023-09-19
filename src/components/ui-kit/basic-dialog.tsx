@@ -17,13 +17,13 @@ export function BasicDialog({
   extraBtns,
   ...modalProps
 }: {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
   onClose: () => void;
   closeDialogBtnText?: string;
   extraBtns?: JSX.Element;
 } & ModalProps) {
   return (
-    <Dialog animationType="slide" {...modalProps}>
+    <Dialog animationType="fade" {...modalProps}>
       <View>
         {children}
         <Stack row align="center" justify="flex-end" spacing={1}>

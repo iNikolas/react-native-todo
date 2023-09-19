@@ -2,6 +2,7 @@ export type {StateType} from './root-reducer';
 export * from './store';
 export {
   clearCreationErrorAction,
+  clearErrorsAction,
   createNewTodoAction,
   deleteTodosAction,
   editTodosAction,

@@ -26,6 +26,10 @@ export function BasicInput({
   const [text, setText] = React.useState(initialText);
 
   const handlePress = () => {
+    if (!text) {
+      return;
+    }
+
     setText('');
     onPress(text);
   };

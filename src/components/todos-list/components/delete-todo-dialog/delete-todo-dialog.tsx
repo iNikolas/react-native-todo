@@ -1,10 +1,9 @@
-import {useTheme} from '@rneui/themed';
 import React from 'react';
-import {Text} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 import {deleteTodosAction} from '@store';
 
+import Animated, {FlipInEasyX} from 'react-native-reanimated';
 import {BasicButton, BasicDialog} from '../../../ui-kit';
 import {DeleteDialogProps} from './types';
 
@@ -14,7 +13,6 @@ export function DeleteTodoDialog({
   onClose,
   show,
 }: DeleteDialogProps) {
-  const {theme} = useTheme();
   const amount = que.length;
 
   const dispatch = useDispatch();
@@ -32,9 +30,10 @@ export function DeleteTodoDialog({
       }
       onClose={onClose}
       visible={show}>
-      <Text>{`Do you really want to delete ${amount} ToDo${
+      <Animated.Text
+        entering={FlipInEasyX}>{`Do you really want to delete ${amount} ToDo${
         amount > 1 ? 's' : ''
-      }?`}</Text>
+      }?`}</Animated.Text>
     </BasicDialog>
   );
 }

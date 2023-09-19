@@ -90,16 +90,7 @@ function* createNewTodoSaga({payload: description}: PayloadAction<string>) {
 
 function* deleteTodosSaga({payload: ids}: PayloadAction<string[]>) {
   try {
-    const response: Array<PromiseSettledResult<string>> = yield deleteTodos(
-      ids,
-    );
-
-    const rejected = response.filter(isRejected).length;
-
-    if (rejected) {
-      throw `Failed to delete ${rejected} todo${rejected > 1 ? 's' : ''}`;
-    }
-
+    yield deleteTodos(ids);
     yield put(deleteTodosSuccessAction());
   } catch (error) {
     yield put(

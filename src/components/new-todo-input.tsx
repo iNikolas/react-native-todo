@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text} from 'react-native';
+import Animated, {BounceIn} from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {errorTypes} from '@constants';
@@ -19,13 +20,15 @@ export function NewTodoInput() {
 
   return (
     <>
-      <BasicInput
-        btnProps={{loading: isCreating}}
-        disabled={isCreating}
-        onPress={(description: string) =>
-          dispatch(createNewTodoAction(description))
-        }
-      />
+      <Animated.View entering={BounceIn}>
+        <BasicInput
+          btnProps={{loading: isCreating}}
+          disabled={isCreating}
+          onPress={(description: string) =>
+            dispatch(createNewTodoAction(description))
+          }
+        />
+      </Animated.View>
       <ErrorModal />
       <SuccessModal />
     </>

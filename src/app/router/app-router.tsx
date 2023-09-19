@@ -16,7 +16,11 @@ export function AppRouter(): JSX.Element {
         }}
         initialRouteName={routes.main}>
         <Stack.Screen name={routes.main} component={Todos} />
-        <Stack.Screen name={routes.createTodo} component={NewTodo} />
+        <Stack.Screen
+          name={routes.createTodo}
+          component={NewTodo}
+          options={{presentation: 'transparentModal', animation: 'fade'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

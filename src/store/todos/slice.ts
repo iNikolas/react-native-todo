@@ -24,6 +24,9 @@ export const todosSlice = createSlice({
         error => error.type !== errorTypes.fetchError,
       );
     },
+    clearErrorsAction: (state: TodosStateType) => {
+      state.errors = [];
+    },
     editTodosAction: (
       state: TodosStateType,
       {payload: editTodoTable}: PayloadAction<{[key: string]: EditTodoType}>,
@@ -153,5 +156,6 @@ export const {
   editTodosErrorAction,
   editTodosSuccessAction,
   deleteTodosSuccessAction,
+  clearErrorsAction,
 } = todosSlice.actions;
 export const todosReducer = todosSlice.reducer;
