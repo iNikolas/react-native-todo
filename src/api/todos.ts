@@ -10,6 +10,51 @@ const publicTodos = 'public-todos';
 
 const cacheTimeToLiveHours = 2;
 
+async function synchronizeWithDatabase({
+  cache,
+}: {
+  cache: TodoType[];
+}): Promise<TodoType[]> {
+  try {
+    const response = await firestore().collection(publicTodos).get();
+
+    const responseNormalized: {value: TodoType[]} = {value: []};
+
+    response.forEach(doc => {
+      const data = doc.data();
+      responseNormalized.value = [
+        ...responseNormalized.value,
+        {
+          id: doc.id,
+          description: data.description,
+          isDone: data.isDone,
+          created: data.created,
+        },
+      ];
+    });
+
+    const newLocalEntries = cache.filter(
+      x => !responseNormalized.value.some(e => e.id === x.id),
+    );
+    const newDatabaseEntries = responseNormalized.value.filter(
+      x => !cache.some(e => e.id === x.id),
+    );
+
+    await Promise.allSettled(
+      newLocalEntries.map(({id, isDone, description, created}) =>
+        firestore()
+          .collection(publicTodos)
+          .doc(id)
+          .set({description, isDone, created}),
+      ),
+    );
+
+    return newDatabaseEntries;
+  } catch (_) {
+    return [];
+  }
+}
+
 export async function invalidateCache() {
   const asyncStorageKey = `${todosKey}/${publicTodos}`;
   const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
@@ -31,33 +76,23 @@ export async function getTodos(): Promise<TodoType[]> {
   const cacheLastedHours =
     (new Date().getTime() - cacheCreated.getTime()) / (1000 * 60 * 60);
 
-  if (cacheTimeToLiveHours > cacheLastedHours) {
-    const response = await AsyncStorage.getItem(asyncStorageKey);
+  const stringifiedCache = await AsyncStorage.getItem(asyncStorageKey);
+  const cache: TodoType[] = stringifiedCache
+    ? JSON.parse(stringifiedCache)
+    : [];
 
-    return response ? JSON.parse(response) : [];
+  if (cacheTimeToLiveHours > cacheLastedHours) {
+    return cache;
   }
 
-  const response = await firestore().collection(publicTodos).get();
+  const databaseEntries = await synchronizeWithDatabase({cache});
 
-  const result: {value: TodoType[]} = {value: []};
+  const result = [...databaseEntries, ...cache];
 
-  response.forEach(doc => {
-    const data = doc.data();
-    result.value = [
-      ...result.value,
-      {
-        id: doc.id,
-        description: data.description,
-        isDone: data.isDone,
-        created: data.created,
-      },
-    ];
-  });
-
-  await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(result.value));
+  await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(result));
   await AsyncStorage.setItem(cacheValidationKey, JSON.stringify(new Date()));
 
-  return result.value;
+  return result;
 }
 
 export async function createNewTodo(description: string): Promise<TodoType> {
@@ -69,11 +104,15 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 
   const asyncStorageKey = `${todosKey}/${publicTodos}`;
 
-  const {id} = await firestore().collection(publicTodos).add(newTodo);
+  const firestoreDoc = firestore().collection(publicTodos).doc();
 
   const todos = await getTodos();
 
-  const result = {...newTodo, id};
+  try {
+    await firestoreDoc.set(newTodo);
+  } catch (_) {}
+
+  const result = {...newTodo, id: firestoreDoc.id};
 
   await AsyncStorage.setItem(
     asyncStorageKey,
@@ -86,11 +125,11 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 export async function deleteTodos(ids: string[]): Promise<void> {
   const asyncStorageKey = `${todosKey}/${publicTodos}`;
 
-  const todosSnapshot = await firestore().collection(publicTodos).get();
+  const databaseTodos = firestore().collection(publicTodos);
   const batch = firestore().batch();
 
-  todosSnapshot.forEach(documentSnapshot => {
-    batch.delete(documentSnapshot.ref);
+  ids.forEach(id => {
+    batch.delete(databaseTodos.doc(id));
   });
 
   await batch.commit();
@@ -100,7 +139,7 @@ export async function deleteTodos(ids: string[]): Promise<void> {
   const newTodos = todos.filter(entry => !ids.includes(entry.id));
 
   if (newTodos.length === todos.length) {
-    throw `Unable do delete ToDo with id: ${ids}`;
+    throw new Error('Unable do delete some ToDos');
   }
 
   return await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
@@ -136,7 +175,9 @@ export async function editTodo(todo: EditTodoType): Promise<TodoType> {
   const doc: Partial<EditTodoType> = {...todo};
   delete doc?.id;
 
-  await firestore().collection(publicTodos).doc(todo.id).update(doc);
+  try {
+    await firestore().collection(publicTodos).doc(todo.id).update(doc);
+  } catch (_) {}
 
   await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
 

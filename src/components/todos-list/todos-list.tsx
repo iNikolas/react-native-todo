@@ -2,8 +2,14 @@ import {useFocusEffect} from '@react-navigation/native';
 import {Stack} from '@rneui/layout';
 import {useTheme} from '@rneui/themed';
 import React from 'react';
-import {FlatList, Text, TouchableHighlight} from 'react-native';
-import Animated, {StretchInX, ZoomIn, ZoomOut} from 'react-native-reanimated';
+import {ScrollView, Text, TouchableHighlight} from 'react-native';
+import Animated, {
+  BounceInLeft,
+  BounceInRight,
+  StretchInX,
+  ZoomIn,
+  ZoomOut,
+} from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {routes} from '@src/app/router';
@@ -198,33 +204,40 @@ export function TodosList(): JSX.Element {
           />
         </AnimatedView>
       )}
-      <FlatList
-        data={todos}
-        renderItem={({item}) => (
-          <TouchableHighlight
-            onPress={() => handleItemPress(item.id)}
-            onLongPress={() => handleItemLongPress(item.id)}>
-            <Todo
-              {...item}
-              editable={item.id === editableTodoId}
-              onFinishEditing={() => setEditableTodoId('')}
-              selected={selectedIds.has(item.id)}
-              showCheckboxes={showCheckboxes}
-              onSelectionChange={() =>
-                setSelectedIds(
-                  prevSelected =>
-                    new Set(
-                      prevSelected.has(item.id)
-                        ? [...prevSelected].filter(id => id !== item.id)
-                        : [...prevSelected, item.id],
-                    ),
-                )
-              }
-            />
-          </TouchableHighlight>
-        )}
-        keyExtractor={item => item.id}
-      />
+      <ScrollView>
+        {todos?.map((item, index) => {
+          const left = Boolean(index % 2);
+          return (
+            <Animated.View
+              key={item.id}
+              entering={(left ? BounceInLeft : BounceInRight)
+                .springify()
+                .duration(600)}>
+              <TouchableHighlight
+                onPress={() => handleItemPress(item.id)}
+                onLongPress={() => handleItemLongPress(item.id)}>
+                <Todo
+                  {...item}
+                  editable={item.id === editableTodoId}
+                  onFinishEditing={() => setEditableTodoId('')}
+                  selected={selectedIds.has(item.id)}
+                  showCheckboxes={showCheckboxes}
+                  onSelectionChange={() =>
+                    setSelectedIds(
+                      prevSelected =>
+                        new Set(
+                          prevSelected.has(item.id)
+                            ? [...prevSelected].filter(id => id !== item.id)
+                            : [...prevSelected, item.id],
+                        ),
+                    )
+                  }
+                />
+              </TouchableHighlight>
+            </Animated.View>
+          );
+        })}
+      </ScrollView>
       <DeleteTodoDialog
         show={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
