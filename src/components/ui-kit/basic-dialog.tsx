@@ -1,7 +1,8 @@
 import {Stack as NativeStack} from '@rneui/layout';
 import {Dialog} from '@rneui/themed';
 import React from 'react';
-import {ModalProps, View} from 'react-native';
+import {ModalProps} from 'react-native';
+import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {styled} from 'styled-components/native';
 
 import {BasicButton} from './basic-btn/basic-btn';
@@ -24,7 +25,7 @@ export function BasicDialog({
 } & ModalProps) {
   return (
     <Dialog animationType="fade" {...modalProps}>
-      <View>
+      <Animated.View entering={FadeIn} exiting={FadeOut}>
         {children}
         <Stack row align="center" justify="flex-end" spacing={1}>
           <BasicButton
@@ -34,7 +35,7 @@ export function BasicDialog({
           />
           {extraBtns}
         </Stack>
-      </View>
+      </Animated.View>
     </Dialog>
   );
 }

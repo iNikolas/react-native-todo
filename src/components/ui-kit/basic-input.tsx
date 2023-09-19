@@ -26,7 +26,7 @@ export function BasicInput({
   const [text, setText] = React.useState(initialText);
 
   const handlePress = () => {
-    if (!text) {
+    if (!text || disabled) {
       return;
     }
 
@@ -46,7 +46,7 @@ export function BasicInput({
       />
       <Box>
         <BasicButton
-          disabled={!text || !!disabled}
+          disabled={!text || disabled}
           onPress={handlePress}
           {...btnProps}>
           {btnText}
