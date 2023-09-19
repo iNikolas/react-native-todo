@@ -8,7 +8,7 @@ const todosKey = 'todos-react-native-app-iNikolas';
 const validationTimeKey = 'validation-time-key';
 const publicTodos = 'public-todos';
 
-const cacheTimeToLiveHours = 2;
+const cacheTimeToLiveHours = 24;
 
 async function synchronizeWithDatabase({
   cache,
@@ -35,7 +35,13 @@ async function synchronizeWithDatabase({
     });
 
     const newLocalEntries = cache.filter(
-      x => !responseNormalized.value.some(e => e.id === x.id),
+      x =>
+        !responseNormalized.value.some(e => e.id === x.id) ||
+        responseNormalized.value.some(
+          e =>
+            e.id === x.id &&
+            (x.description !== e.description || x.isDone !== e.isDone),
+        ),
     );
     const newDatabaseEntries = responseNormalized.value.filter(
       x => !cache.some(e => e.id === x.id),
@@ -133,7 +139,7 @@ export async function deleteTodos(ids: string[]): Promise<void> {
     batch.delete(databaseTodos.doc(id));
   });
 
-  batch.commit();
+  await batch.commit();
 
   return await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
 }
@@ -169,7 +175,6 @@ export async function editTodo(todo: EditTodoType): Promise<TodoType> {
   delete doc?.id;
 
   await AsyncStorage.setItem(asyncStorageKey, JSON.stringify(newTodos));
-  firestore().collection(publicTodos).doc(todo.id).update(doc);
 
   return editedTodo;
 }
