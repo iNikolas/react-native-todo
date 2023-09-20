@@ -103,6 +103,7 @@
 		C60EC1222AB6F59800CD8BBF /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		C60EC1232AB6F59800CD8BBF /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		C60EC1242AB6F59800CD8BBF /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
+		C69764EA2AB9FC3300874497 /* ReactNativeToDoShowcase.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeToDoShowcase.entitlements; path = ReactNativeToDoShowcase/ReactNativeToDoShowcase.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -146,6 +147,7 @@
 		13B07FAE1A68108700A75B9A /* ReactNativeToDoShowcase */ = {
 			isa = PBXGroup;
 			children = (
+				C69764EA2AB9FC3300874497 /* ReactNativeToDoShowcase.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				C60EC1112AB6F59800CD8BBF /* Fonts */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -631,6 +633,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeToDoShowcase/ReactNativeToDoShowcase.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ReactNativeToDoShowcase/Info.plist;
@@ -658,6 +661,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeToDoShowcase/ReactNativeToDoShowcase.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = ReactNativeToDoShowcase/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -14,3 +14,9 @@ export const getTimeFromNow = (input: string): string =>
 
 export const convertColorToRGBA = (color: string, opacity: number) =>
   α(color, opacity);
+
+export const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+};

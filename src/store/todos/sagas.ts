@@ -3,7 +3,7 @@ import {put, takeLatest} from 'redux-saga/effects';
 
 import {todoApi} from '@api';
 import {EditTodoType} from '@types';
-import {isRejected} from '@utils';
+import {getErrorMessage, isRejected} from '@utils';
 
 import {
   clearCreationErrorAction,
@@ -24,12 +24,6 @@ import {
   GET_TODOS,
   TodoType,
 } from './types';
-
-const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-};
 
 function* getTodosSaga() {
   try {

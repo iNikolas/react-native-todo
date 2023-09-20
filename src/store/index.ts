@@ -9,3 +9,8 @@ export {
   getTodosAction,
 } from './todos';
 export type {TodoType} from './todos';
+export {
+  clearErrorsAction as clearUserErrorsAction,
+  putErrorAction,
+  setUserAction,
+} from './user';
