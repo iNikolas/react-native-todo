@@ -4,4 +4,5 @@ export {
   setUserAction,
   userReducer,
 } from './slice';
+export {GUEST} from './types';
 export type {UserStateType} from './types';

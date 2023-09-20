@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 import {TodoType} from '@store';
@@ -6,21 +7,20 @@ import {EditTodoType} from '@types';
 import {
   cacheTimeToLiveHours,
   publicTodos,
-  todosKey,
   validationTimeKey,
 } from './constants';
 
-import {synchronizeWithDatabase} from './utils';
+import {getStorageKey, synchronizeWithDatabase} from './utils';
 
 export async function invalidateCache() {
-  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const asyncStorageKey = getStorageKey();
   const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
 
   await AsyncStorage.removeItem(cacheValidationKey);
 }
 
 export async function getTodos(): Promise<TodoType[]> {
-  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const asyncStorageKey = getStorageKey();
   const cacheValidationKey = `${asyncStorageKey}/${validationTimeKey}`;
 
   const cacheValidationTimestamp = await AsyncStorage.getItem(
@@ -59,9 +59,12 @@ export async function createNewTodo(description: string): Promise<TodoType> {
     isDone: false,
   };
 
-  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const asyncStorageKey = getStorageKey();
 
-  const firestoreDoc = firestore().collection(publicTodos).doc();
+  const user = auth().currentUser;
+  const firestoreDoc = firestore()
+    .collection(user?.uid ?? publicTodos)
+    .doc();
 
   const todos = await getTodos();
 
@@ -76,7 +79,7 @@ export async function createNewTodo(description: string): Promise<TodoType> {
 }
 
 export async function deleteTodos(ids: string[]): Promise<void> {
-  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const asyncStorageKey = getStorageKey();
 
   const todos = await getTodos();
   const newTodos = todos.filter(entry => !ids.includes(entry.id));
@@ -85,7 +88,8 @@ export async function deleteTodos(ids: string[]): Promise<void> {
     throw new Error('Unable do delete some ToDos');
   }
 
-  const databaseTodos = firestore().collection(publicTodos);
+  const user = auth().currentUser;
+  const databaseTodos = firestore().collection(user?.uid ?? publicTodos);
   const batch = firestore().batch();
 
   ids.forEach(id => {
@@ -98,7 +102,7 @@ export async function deleteTodos(ids: string[]): Promise<void> {
 }
 
 export async function editTodo(todo: EditTodoType): Promise<TodoType> {
-  const asyncStorageKey = `${todosKey}/${publicTodos}`;
+  const asyncStorageKey = getStorageKey();
   const todos = await getTodos();
 
   const {newTodos, editedTodo} = todos.reduce<{

@@ -5,10 +5,16 @@ import Animated, {BounceIn} from 'react-native-reanimated';
 import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
-import {PhoneConfirmationInput, PhoneNumberInput} from '@src/components';
-import {putErrorAction, setUserAction} from '@store';
+import {
+  BasicButton,
+  PhoneConfirmationInput,
+  PhoneNumberInput,
+} from '@src/components';
+import {GUEST, putErrorAction, setUserAction} from '@store';
+import {theme} from '@theme';
+import {getErrorMessage} from '@utils';
 
-import {getErrorMessage} from '@src/utils';
+import {Text as NativeText} from '@rneui/themed';
 import {routes} from '../router';
 
 const View = styled(Animated.View)`
@@ -19,6 +25,14 @@ const View = styled(Animated.View)`
   padding: 8px;
   height: 100%;
 `;
+
+const Text = styled(NativeText)`
+  margin-top: 16px;
+`;
+
+const Button = styled(BasicButton).attrs({
+  titleStyle: {color: theme.lightColors?.warning},
+})``;
 
 export function PhoneSignIn() {
   const [loading, setLoading] = React.useState(false);
@@ -47,7 +61,6 @@ export function PhoneSignIn() {
   // Handle the button press
   const signInWithPhoneNumber = async (phoneNumber: string) => {
     setLoading(true);
-    console.log(phoneNumber);
     try {
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
 
@@ -69,7 +82,18 @@ export function PhoneSignIn() {
       {confirm ? (
         <PhoneConfirmationInput confirm={confirm} setConfirm={setConfirm} />
       ) : (
-        <PhoneNumberInput loading={loading} onSubmit={signInWithPhoneNumber} />
+        <>
+          <PhoneNumberInput
+            loading={loading}
+            onSubmit={signInWithPhoneNumber}
+          />
+          <Text>or</Text>
+          <Button
+            title="Proceed as Guest"
+            type="clear"
+            onPress={() => dispatch(setUserAction(GUEST))}
+          />
+        </>
       )}
     </View>
   );

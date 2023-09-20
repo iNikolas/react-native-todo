@@ -3,8 +3,11 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 type ErrorType = {type: typeof errorTypes.authError; message: string};
 
+export const GUEST = 'guest';
+type Guest = typeof GUEST;
+
 export type UserStateType = {
-  data: FirebaseAuthTypes.User | null;
+  data: FirebaseAuthTypes.User | Guest | null;
   errors: ErrorType[];
 };
 

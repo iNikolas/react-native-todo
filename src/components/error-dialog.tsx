@@ -25,8 +25,8 @@ export function ErrorDialog() {
         dispatch(clearErrorsAction());
         dispatch(clearUserErrorsAction());
       }}>
-      {activeErrors.map(e => (
-        <Text>{e.message}</Text>
+      {activeErrors.map((e, i) => (
+        <Text key={e.type + e.message + i}>{e.message}</Text>
       ))}
     </BasicDialog>
   );

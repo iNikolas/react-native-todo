@@ -11,6 +11,7 @@ export {
 export type {TodoType} from './todos';
 export {
   clearErrorsAction as clearUserErrorsAction,
+  GUEST,
   putErrorAction,
   setUserAction,
 } from './user';
